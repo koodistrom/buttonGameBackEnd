@@ -45,6 +45,7 @@ public class MyController {
     @Transactional
     @RequestMapping(value = "/play", method = RequestMethod.POST)
     public PlayerInfo play( HttpSession session){
+        System.out.println(session.getId());
         int newCount = -1;
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
         Integer points = (Integer) session.getAttribute("SESSION_POINTS");
@@ -90,13 +91,13 @@ public class MyController {
     @Transactional
     @RequestMapping(value = "/current-session", method = RequestMethod.GET)
     public PlayerInfo current( HttpSession session){
-
+        System.out.println(session.getId());
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
 
         if(pushCounter.isPresent()){
             int count= (pushCounter.get().getCounter());
             int distanceToNextPrice = ClickCountUtils.distanceToNextPrice(count);
-            System.out.println(session.getId());
+
             Integer points = (Integer) session.getAttribute("SESSION_POINTS");
             String name =  (String) session.getAttribute("SESSION_NAME");
             return new PlayerInfo(points, distanceToNextPrice, false, name);
@@ -131,6 +132,7 @@ public class MyController {
     public PlayerInfo name( @RequestBody  PlayerInfo playerInfo, HttpSession session){
 
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
+        System.out.println(session.getId());
         System.out.println(playerInfo);
         session.setAttribute("SESSION_NAME", playerInfo.getName());
         String name = (String) session.getAttribute("SESSION_NAME");

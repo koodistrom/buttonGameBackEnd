@@ -45,9 +45,10 @@ public class MyController {
     @Transactional
     @RequestMapping(value = "/play", method = RequestMethod.POST)
     public PlayerInfo play( HttpSession session){
-        System.out.println(session.getId());
+
         int newCount = -1;
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
+        System.out.println("pc" + pushCounter.get());
         Integer points = (Integer) session.getAttribute("SESSION_POINTS");
         String name =  (String) session.getAttribute("SESSION_NAME");
 

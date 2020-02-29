@@ -48,9 +48,10 @@ public class MyController {
 
         int newCount = -1;
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
-        System.out.println("pc" + pushCounter.get());
+
         Integer points = (Integer) session.getAttribute("SESSION_POINTS");
         String name =  (String) session.getAttribute("SESSION_NAME");
+        System.out.println("points " + points + "name " + name);
 
         if(points == null){
             points = 0;

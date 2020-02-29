@@ -93,7 +93,7 @@ public class MyController {
     @Transactional
     @RequestMapping(value = "/current-session", method = RequestMethod.GET)
     public PlayerInfo current( HttpSession session){
-        System.out.println(session.getId());
+        //System.out.println(session.getId());
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
 
         if(pushCounter.isPresent()){

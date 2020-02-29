@@ -135,8 +135,9 @@ public class MyController {
 
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
         System.out.println(session.getId());
-        System.out.println(playerInfo);
+
         session.setAttribute("SESSION_NAME", playerInfo.getName());
+        System.out.println( "session name" + session.getAttribute("SESSION_NAME"));
         String name = (String) session.getAttribute("SESSION_NAME");
         session.setAttribute("SESSION_POINTS", 20);
         int distanceToNextPrice =10;

@@ -28,6 +28,13 @@ public class MyController {
     @Autowired
     HighScoreRepository highScoreRepository;
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String index(){
+
+        return "hello world";
+
+    }
+
     /**
      * Mapping for play Post request. Adds one to push counter, checks for win, adds players new points to highscore,
      * and returns info to front end.

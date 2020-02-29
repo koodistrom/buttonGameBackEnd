@@ -96,6 +96,7 @@ public class MyController {
         if(pushCounter.isPresent()){
             int count= (pushCounter.get().getCounter());
             int distanceToNextPrice = ClickCountUtils.distanceToNextPrice(count);
+            System.out.println(session.getId());
             Integer points = (Integer) session.getAttribute("SESSION_POINTS");
             String name =  (String) session.getAttribute("SESSION_NAME");
             return new PlayerInfo(points, distanceToNextPrice, false, name);

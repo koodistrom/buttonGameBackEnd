@@ -23,7 +23,7 @@ public class CorsConfiguration
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("https://jm-button-game.herokuapp.com/").allowCredentials(true);
+                registry.addMapping("/**").allowedOrigins("https://jm-button-game.herokuapp.com").allowCredentials(true);
             }
         };
     }

@@ -50,27 +50,18 @@ public class MyController {
 
         Integer points = score.get().getPoints();
         String name =  score.get().getName();
-
-        int newCount = -1;
-        Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
-
-        System.out.println("points " + points + "name " + name);
-
         if(points == null){
             points = 0;
         }
-
+        Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
         if(pushCounter.isPresent() && points>0){
             points --;
-            newCount= ((pushCounter.get().getCounter()+1)%500);
-
+            int newCount= ((pushCounter.get().getCounter()+1)%500);
             int pointsWon = ClickCountUtils.checkWin(newCount);
             boolean win = !(pointsWon==0);
             int distanceToNextPrice = ClickCountUtils.distanceToNextPrice(newCount);
             pushCountRepository.setCountForPushCounter(newCount,1);
-            System.out.println(newCount);
             points +=pointsWon;
-
             score.get().setPoints(points);
             score.get().setName(name);
             highScoreRepository.save(score.get());
@@ -125,7 +116,6 @@ public class MyController {
             highScoreRepository.save( new Score(i +"", "name"+ i ,(int) (Math.random()*30)));
         }
         */
-
         return highScoreRepository.findTop10ByOrderByPointsDesc();
     }
 
@@ -144,12 +134,14 @@ public class MyController {
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
         highScoreRepository.save(new Score(id, name, 20));
 
-        int distanceToNextPrice =10;
         if(pushCounter.isPresent()) {
             int count = (pushCounter.get().getCounter());
-            distanceToNextPrice = ClickCountUtils.distanceToNextPrice(count);
+            int distanceToNextPrice = ClickCountUtils.distanceToNextPrice(count);
+            return new PlayerInfo(20, distanceToNextPrice, false, name, playerInfo.getId());
+        }else {
+            return null;
         }
-        return new PlayerInfo(20, distanceToNextPrice, false, name, playerInfo.getId());
+
     }
 
 

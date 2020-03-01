@@ -120,13 +120,13 @@ public class MyController {
     @Transactional
     @RequestMapping(value = "/hs", method = RequestMethod.GET)
     public List<Score> hs(){
-
+        /*
         for(int i = 0; i<15; i++){
             highScoreRepository.save( new Score(i +"", "name"+ i ,(int) (Math.random()*30)));
         }
+        */
 
         return highScoreRepository.findTop10ByOrderByPointsDesc();
-
     }
 
     /**

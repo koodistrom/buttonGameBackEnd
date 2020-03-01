@@ -39,18 +39,21 @@ public class MyController {
      * Mapping for play Post request. Adds one to push counter, checks for win, adds players new points to highscore,
      * and returns info to front end.
      *
-     * @param session the session
-     * @return the player info
+     * @param playerInfo before click
+     * @return the player info after click
      */
     @Transactional
     @RequestMapping(value = "/play", method = RequestMethod.POST)
-    public PlayerInfo play( HttpSession session){
-        System.out.println(session.getId());
+    public PlayerInfo play( @RequestBody  PlayerInfo playerInfo){
+        String id = playerInfo.getId();
+        Optional<Score> score = highScoreRepository.findById(playerInfo.getId());
+
+        Integer points = score.get().getPoints();
+        String name =  score.get().getName();
+
         int newCount = -1;
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
 
-        Integer points = (Integer) session.getAttribute("SESSION_POINTS");
-        String name =  (String) session.getAttribute("SESSION_NAME");
         System.out.println("points " + points + "name " + name);
 
         if(points == null){
@@ -67,18 +70,14 @@ public class MyController {
             pushCountRepository.setCountForPushCounter(newCount,1);
             System.out.println(newCount);
             points +=pointsWon;
-            session.setAttribute("SESSION_POINTS", points);
-            Optional<Score> score = highScoreRepository.findById(session.getId());
-            if(score.isPresent()){
-                score.get().setPoints(points);
-                score.get().setName(name);
-                highScoreRepository.save(score.get());
-            }else{
-                highScoreRepository.save(new Score(session.getId(), name, points));
-            }
-            return new PlayerInfo(points, distanceToNextPrice, win, name);
+
+            score.get().setPoints(points);
+            score.get().setName(name);
+            highScoreRepository.save(score.get());
+
+            return new PlayerInfo(points, distanceToNextPrice, win, name, id);
         }else {
-            return new PlayerInfo(points, -1, false, name);
+            return new PlayerInfo(points, -1, false, name, id);
         }
 
     }
@@ -87,22 +86,26 @@ public class MyController {
      * Mapping for current-session GET request. Checks for points and name of player from session
      * and returns them to front end.
      *
-     * @param session the session
+     * @param playerInfo object holding  users id
      * @return the player info
      */
     @Transactional
-    @RequestMapping(value = "/current-session", method = RequestMethod.GET)
-    public PlayerInfo current( HttpSession session){
-        //System.out.println(session.getId());
+    @RequestMapping(value = "/current-session", method = RequestMethod.POST)
+    public PlayerInfo current( @RequestBody  PlayerInfo playerInfo){
+        String id = playerInfo.getId();
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
-
+        Optional<Score> playerScore= highScoreRepository.findById(id);
+        Integer points = 0;
+        String name = null;
+        if(playerScore.isPresent()){
+            points = playerScore.get().getPoints();
+            name =  playerScore.get().getName();
+        }
         if(pushCounter.isPresent()){
             int count= (pushCounter.get().getCounter());
             int distanceToNextPrice = ClickCountUtils.distanceToNextPrice(count);
 
-            Integer points = (Integer) session.getAttribute("SESSION_POINTS");
-            String name =  (String) session.getAttribute("SESSION_NAME");
-            return new PlayerInfo(points, distanceToNextPrice, false, name);
+            return new PlayerInfo(points, distanceToNextPrice, false, name, id);
         }else {
             return (null);
         }
@@ -130,26 +133,23 @@ public class MyController {
      * Mapping for name POST request. Saves posted name to session and sets points to 20.
      *
      * @param playerInfo the player info containing the name
-     * @param session    the session
      * @return the player info
      */
     @Transactional
     @RequestMapping(value = "/name", method = RequestMethod.POST,  consumes = "application/json", produces = "application/json")
-    public PlayerInfo name( @RequestBody  PlayerInfo playerInfo, HttpSession session){
+    public PlayerInfo name( @RequestBody  PlayerInfo playerInfo){
+        String id = playerInfo.getId();
+        String name = playerInfo.getName();
 
         Optional<PushCounter> pushCounter= pushCountRepository.findById(1);
-        System.out.println(session.getId());
+        highScoreRepository.save(new Score(id, name, 20));
 
-        session.setAttribute("SESSION_NAME", playerInfo.getName());
-        System.out.println( "session name" + session.getAttribute("SESSION_NAME"));
-        String name = (String) session.getAttribute("SESSION_NAME");
-        session.setAttribute("SESSION_POINTS", 20);
         int distanceToNextPrice =10;
         if(pushCounter.isPresent()) {
             int count = (pushCounter.get().getCounter());
             distanceToNextPrice = ClickCountUtils.distanceToNextPrice(count);
         }
-        return new PlayerInfo(20, distanceToNextPrice, false, name);
+        return new PlayerInfo(20, distanceToNextPrice, false, name, playerInfo.getId());
     }
 
 

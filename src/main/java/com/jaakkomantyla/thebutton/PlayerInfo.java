@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class PlayerInfo {
+    private String id;
     private int points;
     private int distanceToNextPrice;
     private boolean win;
@@ -26,11 +27,12 @@ public class PlayerInfo {
      * @param win                 the win
      * @param name                the name
      */
-    public PlayerInfo(int points, int distanceToNextPrice, boolean win, String name) {
+    public PlayerInfo(int points, int distanceToNextPrice, boolean win, String name, String id) {
         this.points = points;
         this.distanceToNextPrice = distanceToNextPrice;
         this.win = win;
         this.name = name;
+        this.id = id;
     }
 
     /**
@@ -112,6 +114,24 @@ public class PlayerInfo {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
